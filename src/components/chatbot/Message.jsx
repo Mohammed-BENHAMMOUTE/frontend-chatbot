@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
-import OpenAI from 'openai';
 import './globals.css';
 
 export default function Message(props) {
