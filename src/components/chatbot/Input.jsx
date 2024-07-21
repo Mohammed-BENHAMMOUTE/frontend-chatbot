@@ -3,6 +3,8 @@ import { useToast } from '@chakra-ui/react';
 import {select } from '@chakra-ui/react';
 import { chatfooter3 } from '../imagepath';
 import Image from 'next/image';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMicrophone } from '@fortawesome/free-solid-svg-icons';
 import './globals.css';
 
 export default function Input(props) {
@@ -101,8 +103,9 @@ export default function Input(props) {
                                 <button
                                     className={`btn btn-outline-secondary rounded-circle me-2 ${isListening ? 'btn-danger' : ''}`}
                                     onClick={toggleListening}
+                                
                                 >
-                                    🎤
+                                    <FontAwesomeIcon icon={faMicrophone} size='2x' />
                                 </button>
                                 <input
                                     type="text"

@@ -218,13 +218,7 @@ const Header = () => {
   return (
     <div className="main-wrapper">
       <div className="header">
-        <div className="header-left">
-          <Link href="/" className="logo">
-            <Image src={logo} width={35} height={35} alt="" />{" "}
-            <span>eESJ</span>
-          </Link>
-        </div>
-        <Link href="#" id="toggle_btn" onClick={handlesidebar}>
+      <Link href="#" id="toggle_btn" onClick={handlesidebar}>
           <Image src={baricon} alt="" />
         </Link>
         <Link
@@ -235,6 +229,12 @@ const Header = () => {
         >
           <Image src={baricon1} alt="" />
         </Link>
+        <div className="header-left">
+          <Link href="/" className="logo">
+            <Image src={logo}  width={200} height={35} alt="" />{" "}
+          </Link>
+        </div>
+        
 
         <ul className="nav user-menu float-end">
           <li className="nav-item dropdown d-none d-sm-block">

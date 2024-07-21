@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+// import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "@assets/css/font-awesome.min.css";
 import Link from "next/link";
 import Image from "next/image";
@@ -13,6 +13,11 @@ const Sidebar = (props) => {
   const expandMenu = () => {
     document.body.classList.remove("expand-menu");
   };
+  useEffect(() => {
+    // Load Bootstrap JS only on the client side
+    require("bootstrap/dist/js/bootstrap.bundle.min.js");
+  }, []);
+  
 
   const expandMenuOpen = () => {
     document.body.classList.add("expand-menu");

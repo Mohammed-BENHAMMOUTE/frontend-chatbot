@@ -2,10 +2,13 @@ import "@assets/css/style.css";
 import "@assets/css/bootstrap.min.css";
 import Header from "../components/Header";
 
-export const metadata = {
-  title: "TéléExpertise",
-  description:
-    "Connecter les médecins pour des soins meilleurs et plus rapides",
+export const metadata   = {
+  title: "e-Espace Santé Jeunes",
+  description: "Plateforme officielle de l'Espace Santé Jeunes ",
+  icons:{
+    icon: "/favicon.png",
+  }
+
 };
 
 const RootLayout = ({ children }) => {
@@ -13,7 +16,7 @@ const RootLayout = ({ children }) => {
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
-        <link rel="icon" href="/favicon.png" />
+        {/* <link rel="icon" href="/logo.jpeg" /> */}
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#000000" />
         <meta name="description" />
