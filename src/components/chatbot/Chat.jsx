@@ -17,7 +17,7 @@ import axios from 'axios';
 const Chat = () => {
     const greetings = {
         role: 'assistant',
-        content: "Hello, I'm e-ESJ chatbot, How can I assist you today?",
+        content: "Bonjour, je suis e-ESJ chatbot, comment puis-je vous aider aujourd'hui ?",
     };
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState([greetings]);
@@ -32,6 +32,17 @@ const Chat = () => {
             messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     };
+    const processMessage=(message)=>{
+        const lines = message.trim().split('\n');
+        for (let i=0; i<lines.length; i++) {  
+            if(lines[i].trim()){
+                setMessages(prevMessages => [
+                    ...prevMessages,
+                    { role: 'assistant', content: lines[i]}
+                ]);
+            }
+        }
+    }
 
     const handleSubmit = async () => {
         if (input.trim()) {
@@ -52,10 +63,7 @@ const Chat = () => {
                 });
 
                 if (response.data.response) {
-                    setMessages((prevMessages) => [
-                        ...prevMessages,
-                        { role: 'assistant', content: response.data.response },
-                    ]);
+                    processMessage(response.data.response)
                 } else if (response.data.error) {
                     console.error('Error from server:', response.data.error);
                 }
