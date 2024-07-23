@@ -52,7 +52,10 @@ const Chat = () => {
                 });
 
                 if (response.data.response) {
-                    processMessage(response.data.response)
+                    setMessages((prevMessages) => [
+                        ...prevMessages,
+                        { role: 'assistant', content: response.data.response },
+                    ]);
                 } else if (response.data.error) {
                     console.error('Error from server:', response.data.error);
                 }
