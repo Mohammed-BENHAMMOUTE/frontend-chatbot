@@ -14,6 +14,7 @@ export default function Message(props) {
           </ReactMarkdown>
         </div>
       </div>
+
     </div>
   );
 }

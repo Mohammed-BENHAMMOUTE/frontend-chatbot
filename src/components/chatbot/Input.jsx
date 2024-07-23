@@ -1,45 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import { useToast } from '@chakra-ui/react';
-import {select } from '@chakra-ui/react';
-import { chatfooter3 } from '../imagepath';
+import React, {useState, useEffect, useRef} from 'react';
+import {useToast} from '@chakra-ui/react';
+import {chatfooter3} from '../imagepath';
 import Image from 'next/image';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMicrophone } from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faMicrophone} from '@fortawesome/free-solid-svg-icons';
 import './globals.css';
 
 export default function Input(props) {
     const toast = useToast();
     const [isListening, setIsListening] = useState(false);
-    const [selectedLanguage, setSelectedLanguage] = useState('English');
+    const [selectedLanguage, setSelectedLanguage] = useState('French');
+    const recognitionRef = useRef(null);
 
     useEffect(() => {
-        let recognition = null;
-        
         if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
-            recognition = new window.webkitSpeechRecognition();
-            recognition.continuous = false;
-            
-            switch(selectedLanguage) {
-                case 'English':
-                    recognition.lang = 'en-US';
-                    break;
-                case 'French':
-                    recognition.lang = 'fr-FR';
-                    break;
-                case 'Arabic':
-                    recognition.lang = 'ar-SA';
-                    break;
-                default:
-                    recognition.lang = 'en-US';
-            }
+            recognitionRef.current = new window.webkitSpeechRecognition();
+            recognitionRef.current.continuous = false;
+            recognitionRef.current.interimResults = true;
 
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                props.onChange({ target: { value: transcript } });
+            recognitionRef.current.onresult = (event) => {
+                let interimTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        props.onChange({target: {value: props.value + event.results[i][0].transcript + ' '}});
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+                // Update the input field with both final and interim results
+                props.onChange({target: {value: props.value + interimTranscript + event.results[event.results.length - 1][0].transcript + ' '}});
+            };
+
+            recognitionRef.current.onend = () => {
                 setIsListening(false);
             };
 
-            recognition.onerror = (event) => {
+            recognitionRef.current.onerror = (event) => {
                 console.error('Speech recognition error', event.error);
                 setIsListening(false);
                 toast({
@@ -53,40 +49,52 @@ export default function Input(props) {
             };
         }
 
-        if (isListening && recognition) {
-            try {
-                recognition.start();
-            } catch (error) {
-                console.error('Error starting speech recognition:', error);
-                toast({
-                    title: 'Error starting speech recognition',
-                    description: error.message,
-                    status: 'error',
-                    duration: 3000,
-                    isClosable: true,
-                    position: 'top',
-                });
-                setIsListening(false);
+        return () => {
+            if (recognitionRef.current) {
+                recognitionRef.current.stop();
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (recognitionRef.current) {
+            switch (selectedLanguage) {
+                case 'English':
+                    recognitionRef.current.lang = 'en-US';
+                    break;
+                case 'French':
+                    recognitionRef.current.lang = 'fr-FR';
+                    break;
+                case 'Arabic':
+                    recognitionRef.current.lang = 'ar-SA';
+                    break;
+                default:
+                    recognitionRef.current.lang = 'en-US';
             }
         }
-
-        return () => {
-            if (recognition) recognition.stop();
-        };
-    }, [isListening, selectedLanguage, toast]);
+    }, [selectedLanguage]);
 
     const toggleListening = () => {
-        if (typeof window === 'undefined' || !('webkitSpeechRecognition' in window)) {
+        try {
+            if (typeof window === 'undefined' || !('webkitSpeechRecognition' in window)) {
+                throw new Error('Speech recognition is not supported in this browser');
+            }
+            if (isListening) {
+                recognitionRef.current.stop();
+            } else {
+                recognitionRef.current.start();
+            }
+            setIsListening(!isListening);
+        } catch (error) {
             toast({
-                title: 'Speech recognition is not supported in this browser',
+                title: "Speech recognition error",
+                description: error.message,
                 status: 'error',
                 duration: 3000,
                 position: 'top',
             });
             setIsListening(false);
-            return;
         }
-        setIsListening(!isListening);
     };
 
     const handleLanguageChange = (e) => {
@@ -103,9 +111,9 @@ export default function Input(props) {
                                 <button
                                     className={`btn btn-outline-secondary rounded-circle me-2 ${isListening ? 'btn-danger' : ''}`}
                                     onClick={toggleListening}
-                                
+
                                 >
-                                    <FontAwesomeIcon icon={faMicrophone} size='2x' />
+                                    <FontAwesomeIcon icon={faMicrophone} size='2x'/>
                                 </button>
                                 <input
                                     type="text"
@@ -118,7 +126,7 @@ export default function Input(props) {
                                     style={{fontFamily: 'monospace', fontSize: '14px'}}
                                 />
                                 <div className="send-chat position-icon comman-flex button">
-                                    <div onClick={props.onClick}><Image src={chatfooter3} alt="#" /></div>
+                                    <div onClick={props.onClick}><Image src={chatfooter3} alt="#"/></div>
                                 </div>
                             </div>
                         </div>
@@ -134,12 +142,11 @@ export default function Input(props) {
                                 border: '1px solid #ccc',
                                 borderRadius: '7px',
                                 backgroundColor: 'white',
-
                                 fontSize: '14px',
                                 width: 'auto'
                             }}
                         >
-                            <option value="French" >French</option>
+                            <option value="French">French</option>
                             <option value="English">English</option>
                             <option value="Arabic">Arabic</option>
                         </select>
@@ -148,4 +155,4 @@ export default function Input(props) {
             </div>
         </div>
     );
-}
+};
