@@ -32,17 +32,6 @@ const Chat = () => {
             messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     };
-    const processMessage=(message)=>{
-        const lines = message.trim().split('\n');
-        for (let i=0; i<lines.length; i++) {  
-            if(lines[i].trim()){
-                setMessages(prevMessages => [
-                    ...prevMessages,
-                    { role: 'assistant', content: lines[i]}
-                ]);
-            }
-        }
-    }
 
     const handleSubmit = async () => {
         if (input.trim()) {
